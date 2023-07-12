@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aks-wf
+  labels:
+    app: aks-wf
+  namespace: namespace-workflow-1689163022047
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aks-wf
+  template:
+    metadata:
+      labels:
+        app: aks-wf
+    spec:
+      containers:
+        - name: aks-wf
+          image: aksfuncazurecontainerregistry.azurecr.io/image-workflow-aks-azure-function:latest
+          ports:
+            - containerPort: 5000
