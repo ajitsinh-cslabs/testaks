@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aks-wf
+  namespace: namespace-workflow-1689163022047
+spec:
+  type: LoadBalancer
+  selector:
+    app: aks-wf
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
