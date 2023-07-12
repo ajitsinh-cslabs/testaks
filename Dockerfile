@@ -1,14 +1,21 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS installer-env
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS builder
+WORKDIR /app
 
-COPY . /src/dotnet-function-app
-RUN cd /src/dotnet-function-app && \
-    mkdir -p /home/site/wwwroot && \
-    dotnet publish *.csproj --output /home/site/wwwroot
+# caches restore result by copying csproj file separately
+COPY *.csproj .
+RUN dotnet restore
 
-# To enable ssh & remote debugging on app service change the base image to the one below
-# FROM mcr.microsoft.com/azure-functions/dotnet:4-appservice
-FROM mcr.microsoft.com/azure-functions/dotnet:4
-ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
-    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+COPY . .
+RUN dotnet publish --output /app/ --configuration Release --no-restore
+RUN sed -n 's:.*<AssemblyName>\(.*\)</AssemblyName>.*:\1:p' *.csproj > __assemblyname
+RUN if [ ! -s __assemblyname ]; then filename=$(ls *.csproj); echo ${filename%.*} > __assemblyname; fi
 
-COPY --from=installer-env ["/home/site/wwwroot", "/home/site/wwwroot"]
+# Stage 2
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+WORKDIR /app
+COPY --from=builder /app .
+
+ENV PORT 5000
+EXPOSE 5000
+
+ENTRYPOINT dotnet $(cat /app/__assemblyname).dll --urls "http://*:5000"
