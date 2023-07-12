@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach to .NET Functions with Kubernetes",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:azureFunctions.pickProcess}",
+            "preLaunchTask": "bridge-to-kubernetes.resource",
+            "env": {
+                "GRPC_DNS_RESOLVER": "native",
+                "ASPNETCORE_URLS": "http://+:80"
+            }
+        },
+        {
+            "name": "Attach to .NET Functions",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:azureFunctions.pickProcess}"
+        }
+    ]
+}

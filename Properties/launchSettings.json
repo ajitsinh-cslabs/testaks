@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "aksfunc": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7099"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 30354,
+      "useSSL": false
+    }
+  }
+}
